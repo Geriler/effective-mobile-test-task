@@ -1,0 +1,14 @@
+env: dev
+timeout_stop: 10s
+http:
+  host: server
+  port: 8080
+grpc:
+  host: server
+  port: 8081
+database:
+  host: database
+  port: 5432
+  user: postgres
+  password: postgres
+  name: postgres

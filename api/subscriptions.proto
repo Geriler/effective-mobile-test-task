@@ -1,0 +1,205 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/Geriler/effective-mobile/pb/api;api";
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Сервис подписок",
+    version: "1.0",
+    description: "REST-сервис для агрегации данных об онлайн-подписках пользователей",
+  }
+};
+
+service Subscriptions {
+  rpc AddSubscription(AddSubscriptionRequest) returns (AddSubscriptionResponse)  {
+    option (google.api.http) = {
+      post: "/api/v1/subscriptions",
+      body: "*",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Добавить подписку";
+    };
+  };
+
+  rpc GetSubscription(GetSubscriptionRequest) returns (GetSubscriptionResponse)  {
+    option (google.api.http) = {
+      get: "/api/v1/subscriptions/{subscription_id}",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Получить подписку по её ID";
+    };
+  };
+
+  rpc GetSubscriptions(GetSubscriptionsRequest) returns (GetSubscriptionsResponse)  {
+    option (google.api.http) = {
+      get: "/api/v1/subscriptions",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Получить все подписки";
+    };
+  };
+
+  rpc UpdateSubscription(UpdateSubscriptionRequest) returns (UpdateSubscriptionResponse)  {
+    option (google.api.http) = {
+      put: "/api/v1/subscriptions/{subscription_id}",
+      body: "*",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Обновить подписку";
+    };
+  };
+
+  rpc DeleteSubscription(DeleteSubscriptionRequest) returns (DeleteSubscriptionResponse)  {
+    option (google.api.http) = {
+      delete: "/api/v1/subscriptions/{subscription_id}",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Удалить подписку";
+    };
+  };
+
+  rpc GetSumSubscriptions(GetSumSubscriptionsRequest) returns (GetSumSubscriptionsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/subscriptions/sum",
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Получить сумму подписок за выбранный период с фильтрацией по ID пользователя и названию подписки";
+    };
+  };
+}
+
+message AddSubscriptionRequest {
+  string user_id = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.uuid = true,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "ID пользователя"
+  ];
+  string service_name = 2 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.min_len = 3,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Наименование подписки"
+  ];
+  int32 price = 3 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).int32.gte = 0,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Стоимость подписки"
+  ];
+  string start_date = 4 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.pattern = "^(1[0-2]|0[1-9])-[0-9]{4}$",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Дата старта подписки"
+  ];
+  optional string end_date = 5 [
+    (buf.validate.field).string.pattern = "^(1[0-2]|0[1-9])-[0-9]{4}$",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Дата окончания подписки"
+  ];
+}
+
+message AddSubscriptionResponse {
+  Subscription subscription = 1;
+}
+
+message GetSubscriptionRequest {
+  string subscription_id = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.uuid = true,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "ID подписки"
+  ];
+}
+
+message GetSubscriptionResponse {
+  Subscription subscription = 1;
+}
+
+message GetSubscriptionsRequest {}
+
+message GetSubscriptionsResponse {
+  repeated Subscription subscriptions = 1;
+}
+
+message UpdateSubscriptionRequest {
+  string subscription_id = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.uuid = true,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "ID подписки"
+  ];
+  optional string service_name = 2 [
+    (buf.validate.field).string.min_len = 3,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Наименование подписки"
+  ];
+  optional int32 price = 3 [
+    (buf.validate.field).int32.gte = 0,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Стоимость подписки"
+  ];
+  optional string end_date = 4 [
+    (buf.validate.field).string.pattern = "^(1[0-2]|0[1-9])-[0-9]{4}$",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Дата окончания подписки"
+  ];
+}
+
+message UpdateSubscriptionResponse {
+  Subscription subscription = 1;
+}
+
+message DeleteSubscriptionRequest {
+  string subscription_id = 1 [
+    (buf.validate.field).required = true,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "ID подписки"
+  ];
+}
+
+message DeleteSubscriptionResponse {}
+
+message GetSumSubscriptionsRequest {
+  string start_date = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.pattern = "^(1[0-2]|0[1-9])-[0-9]{4}$",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Дата старта подписки"
+  ];
+  string end_date = 2 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.pattern = "^(1[0-2]|0[1-9])-[0-9]{4}$",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Дата окончания подписки"
+  ];
+  optional string user_id = 3 [
+    (buf.validate.field).string.uuid = true,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "ID пользователя"
+  ];
+  optional string service_name = 4 [
+    (buf.validate.field).string.min_len = 3,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Наименование подписки"
+  ];
+}
+
+message GetSumSubscriptionsResponse {
+  int32 total_sum = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Итоговая сумма подписок"
+  ];
+}
+
+message Subscription {
+  string subscription_id = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "ID подписки"
+  ];
+  string user_id = 2 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "ID пользователя"
+  ];
+  string service_name = 3 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Наименование подписки"
+  ];
+  int32 price = 4 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Стоимость подписки"
+  ];
+  string start_date = 5 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Дата старта подписки"
+  ];
+  optional string end_date = 6 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Дата окончания подписки"
+  ];
+}

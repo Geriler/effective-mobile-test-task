@@ -1,0 +1,378 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Сервис подписок",
+    "description": "REST-сервис для агрегации данных об онлайн-подписках пользователей",
+    "version": "1.0"
+  },
+  "tags": [
+    {
+      "name": "Subscriptions"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/subscriptions": {
+      "get": {
+        "summary": "Получить все подписки",
+        "operationId": "Subscriptions_GetSubscriptions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiGetSubscriptionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Subscriptions"
+        ]
+      },
+      "post": {
+        "summary": "Добавить подписку",
+        "operationId": "Subscriptions_AddSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiAddSubscriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiAddSubscriptionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Subscriptions"
+        ]
+      }
+    },
+    "/api/v1/subscriptions/sum": {
+      "get": {
+        "summary": "Получить сумму подписок за выбранный период с фильтрацией по ID пользователя и названию подписки",
+        "operationId": "Subscriptions_GetSumSubscriptions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiGetSumSubscriptionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "startDate",
+            "description": "Дата старта подписки",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "description": "Дата окончания подписки",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "userId",
+            "description": "ID пользователя",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "serviceName",
+            "description": "Наименование подписки",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Subscriptions"
+        ]
+      }
+    },
+    "/api/v1/subscriptions/{subscriptionId}": {
+      "get": {
+        "summary": "Получить подписку по её ID",
+        "operationId": "Subscriptions_GetSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiGetSubscriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Subscriptions"
+        ]
+      },
+      "delete": {
+        "summary": "Удалить подписку",
+        "operationId": "Subscriptions_DeleteSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiDeleteSubscriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Subscriptions"
+        ]
+      },
+      "put": {
+        "summary": "Обновить подписку",
+        "operationId": "Subscriptions_UpdateSubscription",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiUpdateSubscriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SubscriptionsUpdateSubscriptionBody"
+            }
+          }
+        ],
+        "tags": [
+          "Subscriptions"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "SubscriptionsUpdateSubscriptionBody": {
+      "type": "object",
+      "properties": {
+        "serviceName": {
+          "type": "string",
+          "title": "Наименование подписки"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Стоимость подписки"
+        },
+        "endDate": {
+          "type": "string",
+          "title": "Дата окончания подписки"
+        }
+      }
+    },
+    "apiAddSubscriptionRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "title": "ID пользователя"
+        },
+        "serviceName": {
+          "type": "string",
+          "title": "Наименование подписки"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Стоимость подписки"
+        },
+        "startDate": {
+          "type": "string",
+          "title": "Дата старта подписки"
+        },
+        "endDate": {
+          "type": "string",
+          "title": "Дата окончания подписки"
+        }
+      }
+    },
+    "apiAddSubscriptionResponse": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "$ref": "#/definitions/apiSubscription"
+        }
+      }
+    },
+    "apiDeleteSubscriptionResponse": {
+      "type": "object"
+    },
+    "apiGetSubscriptionResponse": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "$ref": "#/definitions/apiSubscription"
+        }
+      }
+    },
+    "apiGetSubscriptionsResponse": {
+      "type": "object",
+      "properties": {
+        "subscriptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/apiSubscription"
+          }
+        }
+      }
+    },
+    "apiGetSumSubscriptionsResponse": {
+      "type": "object",
+      "properties": {
+        "totalSum": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Итоговая сумма подписок"
+        }
+      }
+    },
+    "apiSubscription": {
+      "type": "object",
+      "properties": {
+        "subscriptionId": {
+          "type": "string",
+          "title": "ID подписки"
+        },
+        "userId": {
+          "type": "string",
+          "title": "ID пользователя"
+        },
+        "serviceName": {
+          "type": "string",
+          "title": "Наименование подписки"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Стоимость подписки"
+        },
+        "startDate": {
+          "type": "string",
+          "title": "Дата старта подписки"
+        },
+        "endDate": {
+          "type": "string",
+          "title": "Дата окончания подписки"
+        }
+      }
+    },
+    "apiUpdateSubscriptionResponse": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "$ref": "#/definitions/apiSubscription"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

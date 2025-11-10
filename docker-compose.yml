@@ -1,0 +1,42 @@
+services:
+  server:
+    container_name: em-server
+    build:
+      context: ./
+      dockerfile: build/Dockerfile
+    ports:
+      - "8080:8080" # HTTP
+      - "8081:8081" # gRPC
+    depends_on:
+      database:
+        condition: service_healthy
+      goose:
+        condition: service_completed_successfully
+
+  database:
+    container_name: em-database
+    image: postgres:18.0
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  goose:
+    container_name: em-goose
+    image: golang:1.25
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - GOOSE_DRIVER=postgres
+      - GOOSE_DBSTRING=postgres://postgres:postgres@database:5432/postgres
+    volumes:
+      - ./migrations:/migrations
+    command: "sh -c 'go install github.com/pressly/goose/v3/cmd/goose@latest && goose -dir /migrations up'"

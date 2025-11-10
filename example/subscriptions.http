@@ -1,0 +1,37 @@
+### Add subscription
+POST http://localhost:8080/api/v1/subscriptions
+Content-Type: application/json
+
+{
+  "service_name": "Yandex Plus",
+  "price": 400,
+  "user_id": "60601fee-2bf1-4721-ae6f-7636e79a0cba",
+  "start_date": "07-2025"
+}
+
+> {% client.global.set("subscription_id", response.body.subscription.subscriptionId) %}
+
+### Get subscription
+GET http://localhost:8080/api/v1/subscriptions/{{subscription_id}}
+Content-Type: application/json
+
+### Get subscriptions
+GET http://localhost:8080/api/v1/subscriptions
+Content-Type: application/json
+
+### Get total sum
+GET http://localhost:8080/api/v1/subscriptions/sum?startDate=01-2025&endDate=12-2025
+Content-Type: application/json
+
+### Update subscription
+PUT http://localhost:8080/api/v1/subscriptions/{{subscription_id}}
+Content-Type: application/json
+
+{
+  "serviceName": "Yandex Pro",
+  "price": 450
+}
+
+### Delete subscription
+DELETE http://localhost:8080/api/v1/subscriptions/{{subscription_id}}
+Content-Type: application/json
