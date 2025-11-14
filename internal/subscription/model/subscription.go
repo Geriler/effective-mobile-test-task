@@ -21,3 +21,8 @@ type Filters struct {
 	UserID      uuid.UUID `json:"user_id,omitempty"`
 	ServiceName string    `json:"service_name,omitempty"`
 }
+
+type Pagination struct {
+	Page  int32 `json:"page"`
+	Count int32 `json:"count"`
+}

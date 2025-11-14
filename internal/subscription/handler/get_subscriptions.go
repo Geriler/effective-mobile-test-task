@@ -14,7 +14,20 @@ func (s *SubscriptionHandler) GetSubscriptions(ctx context.Context, request *pbS
 	const op = "SubscriptionHandler.GetSubscriptions"
 	logger := s.logger.With("op", op).With("request", request)
 
-	subscriptions, err := s.service.ListSubscriptions(ctx)
+	var count int32 = 10
+	if request.GetCount() != 0 {
+		count = *request.Count
+	}
+
+	var page int32 = 0
+	if request.GetPage() != 0 {
+		page = *request.Page - 1
+	}
+
+	subscriptions, err := s.service.ListSubscriptions(ctx, model.Pagination{
+		Page:  page,
+		Count: count,
+	})
 	if err != nil {
 		if errors.Is(err, model.ErrSubscriptionNotFound) {
 			return &pbSubscription.GetSubscriptionsResponse{

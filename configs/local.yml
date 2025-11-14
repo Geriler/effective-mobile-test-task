@@ -1,4 +1,6 @@
-env: local
+logger:
+  type: text
+  level: debug
 timeout_stop: 10s
 http:
   host: localhost

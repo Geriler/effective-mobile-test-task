@@ -8,7 +8,7 @@ import (
 )
 
 type Config struct {
-	Env         string        `env:"ENV" yaml:"env" env-default:"dev"`
+	Logger      Logger        `yaml:"logger" env-prefix:"LOGGER_"`
 	TimeoutStop time.Duration `env:"TIMEOUT_STOP" yaml:"timeout_stop" env-default:"10s"`
 	HTTP        Address       `yaml:"http" env-prefix:"HTTP_"`
 	GRPC        Address       `yaml:"grpc" env-prefix:"GRPC_"`
@@ -26,6 +26,11 @@ type Database struct {
 	User     string `env:"USER" yaml:"user" env-required:"true"`
 	Password string `env:"PASSWORD" yaml:"password" env-required:"true"`
 	Name     string `env:"NAME" yaml:"name" env-required:"true"`
+}
+
+type Logger struct {
+	Type  string `env:"TYPE" yaml:"type" env-default:"json"`
+	Level string `env:"LEVEL" yaml:"level" env-default:"info"`
 }
 
 func MustLoad() Config {

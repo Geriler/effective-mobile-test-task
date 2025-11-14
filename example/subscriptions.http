@@ -16,7 +16,7 @@ GET http://localhost:8080/api/v1/subscriptions/{{subscription_id}}
 Content-Type: application/json
 
 ### Get subscriptions
-GET http://localhost:8080/api/v1/subscriptions
+GET http://localhost:8080/api/v1/subscriptions?count=5&page=1
 Content-Type: application/json
 
 ### Get total sum
@@ -28,8 +28,11 @@ PUT http://localhost:8080/api/v1/subscriptions/{{subscription_id}}
 Content-Type: application/json
 
 {
-  "serviceName": "Yandex Pro",
-  "price": 450
+  "user_id": "60601fee-2bf1-4721-ae6f-7636e79a0cbc",
+  "service_name": "Yandex Pro",
+  "price": 450,
+  "start_date": "05-2025",
+  "end_date": "05-2026"
 }
 
 ### Delete subscription

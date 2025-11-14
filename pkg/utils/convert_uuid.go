@@ -10,7 +10,7 @@ import (
 func GoogleUUIDToPgxUUID(id uuid.UUID) pgtype.UUID {
 	return pgtype.UUID{
 		Bytes: id,
-		Valid: true,
+		Valid: id != uuid.Nil,
 	}
 }
 

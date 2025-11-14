@@ -11,12 +11,15 @@ WHERE id = sqlc.arg(subscription_id);
 
 -- name: AllSubscriptions :many
 SELECT id, user_id, service_name, price, start_date, end_date
-FROM subscriptions;
+FROM subscriptions
+LIMIT sqlc.arg(count)::INT OFFSET sqlc.arg(count)::INT * sqlc.arg(page)::INT;
 
 -- name: UpdateSubscription :one
 UPDATE subscriptions
-SET service_name = COALESCE(sqlc.narg(service_name)::TEXT, service_name),
+SET user_id      = COALESCE(sqlc.narg(user_id)::uuid, user_id),
+    service_name = COALESCE(sqlc.narg(service_name)::TEXT, service_name),
     price        = COALESCE(sqlc.narg(price)::INT, price),
+    start_date   = COALESCE(sqlc.narg(start_date)::DATE, start_date),
     end_date     = COALESCE(sqlc.narg(end_date)::DATE, end_date)
 WHERE id = sqlc.arg(subscription_id)
 RETURNING id, user_id, service_name, price, start_date, end_date;
@@ -27,7 +30,12 @@ FROM subscriptions
 WHERE id = sqlc.arg(subscription_id);
 
 -- name: GetSumSubscriptions :one
-SELECT COALESCE(SUM(price), 0)::INT
+SELECT COALESCE(SUM(price * (
+    (EXTRACT (YEAR FROM (LEAST(COALESCE(end_date, sqlc.arg(end_date)::DATE), sqlc.arg(end_date)::DATE))) -
+     EXTRACT (YEAR FROM GREATEST(start_date, sqlc.arg(start_date)::DATE))) * 12 +
+    (EXTRACT (MONTH FROM (LEAST(COALESCE(end_date, sqlc.arg(end_date)::DATE), sqlc.arg(end_date)::DATE))) -
+     EXTRACT (MONTH FROM GREATEST(start_date, sqlc.arg(start_date)::DATE))) + 1
+    )), 0)::INT
 FROM subscriptions
 WHERE start_date <= sqlc.arg(end_date)::DATE
   AND (end_date IS NULL OR end_date >= sqlc.arg(start_date)::DATE)

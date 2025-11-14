@@ -29,7 +29,7 @@ func (s *SubscriptionHandler) DeleteSubscription(ctx context.Context, request *p
 	err = s.service.DeleteSubscription(ctx, subscriptionID)
 	if err != nil {
 		logger.Error("failed delete subscription", "error", err)
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &pbSubscription.DeleteSubscriptionResponse{}, nil

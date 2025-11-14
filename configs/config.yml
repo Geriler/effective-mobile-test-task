@@ -1,4 +1,6 @@
-env: dev
+logger:
+  type: json
+  level: debug
 timeout_stop: 10s
 http:
   host: server

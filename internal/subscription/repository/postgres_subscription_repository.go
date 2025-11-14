@@ -113,11 +113,14 @@ func (r *PostgresSubscriptionRepository) GetSubscriptionById(ctx context.Context
 	}, nil
 }
 
-func (r *PostgresSubscriptionRepository) AllSubscriptions(ctx context.Context) ([]model.Subscription, error) {
+func (r *PostgresSubscriptionRepository) AllSubscriptions(ctx context.Context, params model.Pagination) ([]model.Subscription, error) {
 	const op = "PostgresSubscriptionRepository.AllSubscriptions"
 	logger := r.logger.With("op", op)
 
-	rows, err := r.cmd.AllSubscriptions(ctx)
+	rows, err := r.cmd.AllSubscriptions(ctx, repository.AllSubscriptionsParams{
+		Count: params.Count,
+		Page:  params.Page,
+	})
 	if errors.Is(err, sql.ErrNoRows) {
 		logger.Warn("subscriptions not found")
 		return nil, model.ErrSubscriptionNotFound
@@ -162,6 +165,7 @@ func (r *PostgresSubscriptionRepository) UpdateSubscription(ctx context.Context,
 
 	params := repository.UpdateSubscriptionParams{
 		SubscriptionID: utils.GoogleUUIDToPgxUUID(id),
+		UserID:         utils.GoogleUUIDToPgxUUID(subscription.UserID),
 		ServiceName: pgtype.Text{
 			String: subscription.ServiceName,
 			Valid:  subscription.ServiceName != "",
@@ -169,6 +173,10 @@ func (r *PostgresSubscriptionRepository) UpdateSubscription(ctx context.Context,
 		Price: pgtype.Int4{
 			Int32: subscription.Price,
 			Valid: true,
+		},
+		StartDate: pgtype.Date{
+			Time:  subscription.StartDate,
+			Valid: !subscription.StartDate.IsZero(),
 		},
 		EndDate: pgtype.Date{
 			Time:  subscription.EndDate,

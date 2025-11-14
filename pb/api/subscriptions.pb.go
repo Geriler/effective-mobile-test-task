@@ -234,6 +234,8 @@ func (x *GetSubscriptionResponse) GetSubscription() *Subscription {
 
 type GetSubscriptionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Count         *int32                 `protobuf:"varint,1,opt,name=count,proto3,oneof" json:"count,omitempty"`
+	Page          *int32                 `protobuf:"varint,2,opt,name=page,proto3,oneof" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -266,6 +268,20 @@ func (x *GetSubscriptionsRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetSubscriptionsRequest.ProtoReflect.Descriptor instead.
 func (*GetSubscriptionsRequest) Descriptor() ([]byte, []int) {
 	return file_api_subscriptions_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetSubscriptionsRequest) GetCount() int32 {
+	if x != nil && x.Count != nil {
+		return *x.Count
+	}
+	return 0
+}
+
+func (x *GetSubscriptionsRequest) GetPage() int32 {
+	if x != nil && x.Page != nil {
+		return *x.Page
+	}
+	return 0
 }
 
 type GetSubscriptionsResponse struct {
@@ -315,9 +331,11 @@ func (x *GetSubscriptionsResponse) GetSubscriptions() []*Subscription {
 type UpdateSubscriptionRequest struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	SubscriptionId string                 `protobuf:"bytes,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
-	ServiceName    *string                `protobuf:"bytes,2,opt,name=service_name,json=serviceName,proto3,oneof" json:"service_name,omitempty"`
-	Price          *int32                 `protobuf:"varint,3,opt,name=price,proto3,oneof" json:"price,omitempty"`
-	EndDate        *string                `protobuf:"bytes,4,opt,name=end_date,json=endDate,proto3,oneof" json:"end_date,omitempty"`
+	UserId         *string                `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	ServiceName    *string                `protobuf:"bytes,3,opt,name=service_name,json=serviceName,proto3,oneof" json:"service_name,omitempty"`
+	Price          *int32                 `protobuf:"varint,4,opt,name=price,proto3,oneof" json:"price,omitempty"`
+	StartDate      *string                `protobuf:"bytes,5,opt,name=start_date,json=startDate,proto3,oneof" json:"start_date,omitempty"`
+	EndDate        *string                `protobuf:"bytes,6,opt,name=end_date,json=endDate,proto3,oneof" json:"end_date,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -359,6 +377,13 @@ func (x *UpdateSubscriptionRequest) GetSubscriptionId() string {
 	return ""
 }
 
+func (x *UpdateSubscriptionRequest) GetUserId() string {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return ""
+}
+
 func (x *UpdateSubscriptionRequest) GetServiceName() string {
 	if x != nil && x.ServiceName != nil {
 		return *x.ServiceName
@@ -371,6 +396,13 @@ func (x *UpdateSubscriptionRequest) GetPrice() int32 {
 		return *x.Price
 	}
 	return 0
+}
+
+func (x *UpdateSubscriptionRequest) GetStartDate() string {
+	if x != nil && x.StartDate != nil {
+		return *x.StartDate
+	}
+	return ""
 }
 
 func (x *UpdateSubscriptionRequest) GetEndDate() string {
@@ -718,17 +750,27 @@ const file_api_subscriptions_proto_rawDesc = "" +
 	"\x16GetSubscriptionRequest\x12L\n" +
 	"\x0fsubscription_id\x18\x01 \x01(\tB#\x92A\x15*\x13ID подписки\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0esubscriptionId\"P\n" +
 	"\x17GetSubscriptionResponse\x125\n" +
-	"\fsubscription\x18\x01 \x01(\v2\x11.api.SubscriptionR\fsubscription\"\x19\n" +
-	"\x17GetSubscriptionsRequest\"S\n" +
+	"\fsubscription\x18\x01 \x01(\v2\x11.api.SubscriptionR\fsubscription\"\xd2\x01\n" +
+	"\x17GetSubscriptionsRequest\x12b\n" +
+	"\x05count\x18\x01 \x01(\x05BG\x92A=*;Количество подписок на страницу\xbaH\x04\x1a\x02 \x00H\x00R\x05count\x88\x01\x01\x12@\n" +
+	"\x04page\x18\x02 \x01(\x05B'\x92A\x1d*\x1bНомер страницы\xbaH\x04\x1a\x02 \x00H\x01R\x04page\x88\x01\x01B\b\n" +
+	"\x06_countB\a\n" +
+	"\x05_page\"S\n" +
 	"\x18GetSubscriptionsResponse\x127\n" +
-	"\rsubscriptions\x18\x01 \x03(\v2\x11.api.SubscriptionR\rsubscriptions\"\xb0\x03\n" +
+	"\rsubscriptions\x18\x01 \x03(\v2\x11.api.SubscriptionR\rsubscriptions\"\x85\x05\n" +
 	"\x19UpdateSubscriptionRequest\x12L\n" +
-	"\x0fsubscription_id\x18\x01 \x01(\tB#\x92A\x15*\x13ID подписки\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0esubscriptionId\x12]\n" +
-	"\fservice_name\x18\x02 \x01(\tB5\x92A+*)Наименование подписки\xbaH\x04r\x02\x10\x03H\x00R\vserviceName\x88\x01\x01\x12J\n" +
-	"\x05price\x18\x03 \x01(\x05B/\x92A%*#Стоимость подписки\xbaH\x04\x1a\x02(\x00H\x01R\x05price\x88\x01\x01\x12r\n" +
-	"\bend_date\x18\x04 \x01(\tBR\x92A.*,Дата окончания подписки\xbaH\x1er\x1c2\x1a^(1[0-2]|0[1-9])-[0-9]{4}$H\x02R\aendDate\x88\x01\x01B\x0f\n" +
+	"\x0fsubscription_id\x18\x01 \x01(\tB#\x92A\x15*\x13ID подписки\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0esubscriptionId\x12F\n" +
+	"\auser_id\x18\x02 \x01(\tB(\x92A\x1d*\x1bID пользователя\xbaH\x05r\x03\xb0\x01\x01H\x00R\x06userId\x88\x01\x01\x12]\n" +
+	"\fservice_name\x18\x03 \x01(\tB5\x92A+*)Наименование подписки\xbaH\x04r\x02\x10\x03H\x01R\vserviceName\x88\x01\x01\x12J\n" +
+	"\x05price\x18\x04 \x01(\x05B/\x92A%*#Стоимость подписки\xbaH\x04\x1a\x02(\x00H\x02R\x05price\x88\x01\x01\x12p\n" +
+	"\n" +
+	"start_date\x18\x05 \x01(\tBL\x92A(*&Дата старта подписки\xbaH\x1er\x1c2\x1a^(1[0-2]|0[1-9])-[0-9]{4}$H\x03R\tstartDate\x88\x01\x01\x12r\n" +
+	"\bend_date\x18\x06 \x01(\tBR\x92A.*,Дата окончания подписки\xbaH\x1er\x1c2\x1a^(1[0-2]|0[1-9])-[0-9]{4}$H\x04R\aendDate\x88\x01\x01B\n" +
+	"\n" +
+	"\b_user_idB\x0f\n" +
 	"\r_service_nameB\b\n" +
-	"\x06_priceB\v\n" +
+	"\x06_priceB\r\n" +
+	"\v_start_dateB\v\n" +
 	"\t_end_date\"S\n" +
 	"\x1aUpdateSubscriptionResponse\x125\n" +
 	"\fsubscription\x18\x01 \x01(\v2\x11.api.SubscriptionR\fsubscription\"d\n" +
@@ -822,6 +864,7 @@ func file_api_subscriptions_proto_init() {
 		return
 	}
 	file_api_subscriptions_proto_msgTypes[0].OneofWrappers = []any{}
+	file_api_subscriptions_proto_msgTypes[4].OneofWrappers = []any{}
 	file_api_subscriptions_proto_msgTypes[6].OneofWrappers = []any{}
 	file_api_subscriptions_proto_msgTypes[10].OneofWrappers = []any{}
 	file_api_subscriptions_proto_msgTypes[12].OneofWrappers = []any{}

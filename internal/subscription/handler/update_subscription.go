@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"buf.build/go/protovalidate"
@@ -28,6 +29,24 @@ func (s *SubscriptionHandler) UpdateSubscription(ctx context.Context, request *p
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
+	var userID uuid.UUID
+	if request.GetUserId() != "" {
+		userID, err = uuid.Parse(request.GetUserId())
+		if err != nil {
+			logger.Error("failed parse user id", "error", err)
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
+	}
+
+	var startDate time.Time
+	if request.GetEndDate() != "" {
+		startDate, err = time.Parse("01-2006", request.GetStartDate())
+		if err != nil {
+			logger.Error("failed parse start date", "error", err)
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
+	}
+
 	var endDate time.Time
 	if request.GetEndDate() != "" {
 		endDate, err = time.Parse("01-2006", request.GetEndDate())
@@ -38,13 +57,19 @@ func (s *SubscriptionHandler) UpdateSubscription(ctx context.Context, request *p
 	}
 
 	subscription := model.Subscription{
+		UserID:      userID,
 		ServiceName: request.GetServiceName(),
 		Price:       request.GetPrice(),
+		StartDate:   startDate,
 		EndDate:     endDate,
 	}
 
 	resultSubscription, err := s.service.UpdateSubscription(ctx, subscriptionID, subscription)
 	if err != nil {
+		if errors.Is(err, model.ErrSubscriptionNotFound) {
+			return nil, status.Error(codes.NotFound, err.Error())
+		}
+
 		logger.Error("failed update subscription", "error", err)
 		return nil, status.Error(codes.Internal, err.Error())
 	}

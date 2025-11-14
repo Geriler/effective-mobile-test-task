@@ -16,7 +16,7 @@ func main() {
 
 	cfg := config.MustLoad()
 
-	log := logger.Setup(cfg.Env)
+	log := logger.Setup(cfg.Logger.Type, cfg.Logger.Level)
 
 	grpcServer, err := app.NewGRPCServer(rootCtx, cfg, log)
 	if err != nil {

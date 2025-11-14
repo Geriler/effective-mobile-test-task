@@ -27,6 +27,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - pg_data:/var/lib/postgresql/data
 
   goose:
     container_name: em-goose
@@ -40,3 +42,6 @@ services:
     volumes:
       - ./migrations:/migrations
     command: "sh -c 'go install github.com/pressly/goose/v3/cmd/goose@latest && goose -dir /migrations up'"
+
+volumes:
+  pg_data:

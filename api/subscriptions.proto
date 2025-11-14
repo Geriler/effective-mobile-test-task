@@ -117,7 +117,16 @@ message GetSubscriptionResponse {
   Subscription subscription = 1;
 }
 
-message GetSubscriptionsRequest {}
+message GetSubscriptionsRequest {
+  optional int32 count = 1 [
+    (buf.validate.field).int32.gt = 0,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Количество подписок на страницу"
+  ];
+  optional int32 page = 2 [
+    (buf.validate.field).int32.gt = 0,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Номер страницы"
+  ];
+}
 
 message GetSubscriptionsResponse {
   repeated Subscription subscriptions = 1;
@@ -129,15 +138,23 @@ message UpdateSubscriptionRequest {
     (buf.validate.field).string.uuid = true,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "ID подписки"
   ];
-  optional string service_name = 2 [
+  optional string user_id = 2 [
+    (buf.validate.field).string.uuid = true,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "ID пользователя"
+  ];
+  optional string service_name = 3 [
     (buf.validate.field).string.min_len = 3,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Наименование подписки"
   ];
-  optional int32 price = 3 [
+  optional int32 price = 4 [
     (buf.validate.field).int32.gte = 0,
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Стоимость подписки"
   ];
-  optional string end_date = 4 [
+  optional string start_date = 5 [
+    (buf.validate.field).string.pattern = "^(1[0-2]|0[1-9])-[0-9]{4}$",
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Дата старта подписки"
+  ];
+  optional string end_date = 6 [
     (buf.validate.field).string.pattern = "^(1[0-2]|0[1-9])-[0-9]{4}$",
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field).title = "Дата окончания подписки"
   ];

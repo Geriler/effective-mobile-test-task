@@ -51,7 +51,7 @@ func (s *SubscriptionHandler) GetSumSubscriptions(ctx context.Context, request *
 	})
 	if err != nil {
 		logger.Error("failed get total sum", "error", err)
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &pbSubscription.GetSumSubscriptionsResponse{

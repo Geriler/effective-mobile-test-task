@@ -35,6 +35,24 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "count",
+            "description": "Количество подписок на страницу",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page",
+            "description": "Номер страницы",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
         "tags": [
           "Subscriptions"
         ]
@@ -226,6 +244,10 @@
     "SubscriptionsUpdateSubscriptionBody": {
       "type": "object",
       "properties": {
+        "userId": {
+          "type": "string",
+          "title": "ID пользователя"
+        },
         "serviceName": {
           "type": "string",
           "title": "Наименование подписки"
@@ -234,6 +256,10 @@
           "type": "integer",
           "format": "int32",
           "title": "Стоимость подписки"
+        },
+        "startDate": {
+          "type": "string",
+          "title": "Дата старта подписки"
         },
         "endDate": {
           "type": "string",

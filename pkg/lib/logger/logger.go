@@ -5,22 +5,26 @@ import (
 	"os"
 )
 
+type TypeHandler string
+
 const (
-	Local string = "local"
-	Dev   string = "dev"
-	Prod  string = "prod"
+	Text TypeHandler = "text"
+	JSON TypeHandler = "json"
 )
 
 var log *slog.Logger
 
-func Setup(env string) *slog.Logger {
-	switch env {
-	case Local:
-		log = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	case Dev:
-		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	case Prod:
-		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+func Setup(typeHandlerStr, levelStr string) *slog.Logger {
+	typeHandler := TypeHandler(typeHandlerStr)
+	level := parseLevel(levelStr)
+
+	options := &slog.HandlerOptions{Level: level}
+
+	switch typeHandler {
+	case Text:
+		log = slog.New(slog.NewTextHandler(os.Stdout, options))
+	case JSON:
+		log = slog.New(slog.NewJSONHandler(os.Stdout, options))
 	}
 
 	return log
@@ -28,4 +32,19 @@ func Setup(env string) *slog.Logger {
 
 func GetLogger() *slog.Logger {
 	return log
+}
+
+func parseLevel(levelStr string) slog.Level {
+	switch levelStr {
+	case "debug":
+		return slog.LevelDebug
+	case "info":
+		return slog.LevelInfo
+	case "warn":
+		return slog.LevelWarn
+	case "error":
+		return slog.LevelError
+	default:
+		return slog.LevelInfo
+	}
 }
